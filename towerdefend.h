@@ -35,6 +35,9 @@ typedef struct {
     //int score_emplacement;  //un clin d'oeil pour suscister une id�e de tri
 } Tunite;
 
+//Ajout pour eviter les erreurs de compilation (by Rayane)
+typedef struct T_cell T_cell;
+
 typedef struct T_cell{
     struct T_cell *suiv;
     Tunite *pdata; //pointeur vers une unit�
@@ -75,8 +78,8 @@ Tunite *creeDragon(int posx, int posy);
 Tunite *creeChevalier(int posx, int posy);
 
 
-//Void supprimerUnite(TListePlayer *player, Tunite *UniteDetruite);
-Void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite);
+void supprimerUnite(TListePlayer *player, Tunite *UniteDetruite);
+void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite);
 
 
 #endif // TOWERDEFEND_H_INCLUDED

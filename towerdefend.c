@@ -188,6 +188,7 @@ Tunite *creeTourRoi(int posx, int posy){
     return nouv;
 }
 
+
 Tunite *creeDragon(int posx, int posy){
     Tunite *nouv = (Tunite*)malloc(sizeof(Tunite));
     nouv->nom = dragon;
@@ -260,6 +261,9 @@ Tunite *creeChevalier(int posx, int posy){
  * Algorithme : Insertion en tête
  * Complexité : Temps O(1) | Espace O(1)
  *
+ * @param player        Pointeur vers la tête de la liste du joueur
+ * @param nouvelleUnite Pointeur vers l'unité à insérer
+ *
  * Fonctionnement :
  *   On alloue une nouvelle cellule en mémoire, puis on vérifie le succès
  *   de l'allocation. On lui affecte ensuite la donnée (unité), on la relie
@@ -278,7 +282,48 @@ void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite){
     *player = newPlayer; 
 }
 
-void SupprimerUnite(T_listePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu){
+/**
+ * Objectif   : Supprimer une unité morte de la liste d'un joueur et du plateau
+ * Algorithme : Parcours linéaire avec pointeur précédent (prev/current)
+ * Complexité : Temps O(n) | Espace O(1)
+ *
+ * @param player        Pointeur vers la tête de la liste du joueur
+ * @param uniteDetruite Pointeur vers l'unité à supprimer
+ * @param jeu           Plateau de jeu (tableau 2D de pointeurs)
+ *
+ * Fonctionnement :
+ *   On vérifie d'abord que la liste et la cible sont valides, puis que
+ *   l'unité est bien morte (PV == 0). On parcourt ensuite la liste jusqu'à
+ *   trouver la cellule correspondante. On efface l'unité du plateau, on
+ *   recoud la liste (cas tête ou milieu/fin), puis on libère la cellule.
+ */
+void SupprimerUnite(TListePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu){
+    T_cell *prev = NULL;
+    T_cell *current = *player;
 
-    
+    if(*player == NULL) return;
+    if(uniteDetruite == NULL) return;
+    if(uniteDetruite -> pointsDeVie == 0){
+        while(current != NULL){
+            if (current -> pdata == uniteDetruite){
+            
+                jeu[current->pdata->posX][current->pdata->posY] = NULL;
+            
+                if(prev == NULL) {
+                    *player = current -> suiv;
+                } else {
+                    prev -> suiv = current -> suiv;
+                }
+        
+                free(current);
+                break;
+            }
+
+            prev = current;
+            current = current->suiv;
+        }
+
+    }
+
 }
+
