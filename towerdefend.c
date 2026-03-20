@@ -254,3 +254,31 @@ Tunite *creeChevalier(int posx, int posy){
     //nouv -> cible = NULL;
     return nouv;
 }
+
+/**
+ * Objectif   : Insère une unité en tête de la liste chaînée d'un joueur
+ * Algorithme : Insertion en tête
+ * Complexité : Temps O(1) | Espace O(1)
+ *
+ * Fonctionnement :
+ *   On alloue une nouvelle cellule en mémoire, puis on vérifie le succès
+ *   de l'allocation. On lui affecte ensuite la donnée (unité), on la relie
+ *   à l'ancienne tête de liste, et on met à jour la tête pour qu'elle
+ *   pointe vers la nouvelle cellule.
+ */
+void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite){
+    T_cell *newPlayer =(T_cell *)malloc(sizeof(T_cell));
+    if(newPlayer == NULL) {
+        fprintf(stderr, "Echec d'allocation");
+        return;
+    }
+
+    (newPlayer -> pdata) = nouvelleUnite;
+    newPlayer -> suiv = *player;
+    *player = newPlayer; 
+}
+
+void SupprimerUnite(T_listePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu){
+
+    
+}
