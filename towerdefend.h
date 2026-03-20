@@ -35,7 +35,7 @@ typedef struct {
     //int score_emplacement;  //un clin d'oeil pour suscister une id�e de tri
 } Tunite;
 
-//Ajout pour eviter les erreurs de compilation (by Rayane)
+//Ajout pour les erreurs de compilation (by Rayane)
 typedef struct T_cell T_cell;
 
 typedef struct T_cell{
@@ -66,15 +66,15 @@ Tunite *creeTourRoi(int posx, int posy);
 bool tourRoiDetruite(TListePlayer player);
 void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu)
 
-TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante) ; //retourne la liste des cibles possibles
+
 Void combat(SDL_Surface *surface , Tunite * UniteAttaquante, Tunite * UniteCible);  //qui utilise dessineAttaque (de maSDL.h)
 */
 
+TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante) ; //retourne la liste des cibles possibles
+
 Tunite *creeArcher(int posx, int posy);
 Tunite *creeGargouille(int posx, int posy);
-
 Tunite *creeDragon(int posx, int posy);
-
 Tunite *creeChevalier(int posx, int posy);
 
 

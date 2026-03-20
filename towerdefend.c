@@ -322,8 +322,46 @@ void SupprimerUnite(TListePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu
             prev = current;
             current = current->suiv;
         }
-
     }
-
 }
 
+/**
+ * Objectif   : Construire la liste de toutes les unités ennemies à portée d'attaque
+ *              d'une unité attaquante, en tenant compte de sa portée et de ses cibles valides.
+ * Algorithme : Balayage exhaustif du plateau (double boucle) + distance de Manhattan
+ * Complexité : Temps O(n²) | Espace O(k) avec k = nombre d'unités à portée
+ *
+ * @param jeu              Plateau de jeu (tableau 2D de pointeurs vers Tunite)
+ * @param UniteAttaquante  Pointeur vers l'unité qui effectue l'attaque
+ * @return                 Liste chaînée des unités situées à portée et attaquables
+ *
+ * Fonctionnement :
+ *   On balaye chaque case du plateau. Pour chaque case non vide, on calcule
+ *   la distance de Manhattan entre la cible et l'attaquant :
+ *       d = |xCible - xAttaquant| + |yCible - yAttaquant|
+ *   Une unité est ajoutée au résultat si et seulement si :
+ *     1. d <= portée de l'attaquant
+ *     2. Le type de position de la cible (sol, air) est attaquable par l'unité
+ *        (cibleAttaquable == maposition  OU  cibleAttaquable == solEtAir)
+ *   La liste résultat est construite via AjouterUnite et retournée en fin de parcours.
+ *
+ */
+TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante){
+    TListePlayer resultat = NULL;
+    int distance = 0;
+    Tunite *cible;
+
+    for(int i = 0; i < LARGEURJEU; i++){
+        for(int j = 0; j < HAUTEURJEU; j++){
+            if(jeu[i][j] != NULL){
+               cible = jeu[i][j];
+               distance = abs(cible->posX - UniteAttaquante->posX) + abs(cible->posY - UniteAttaquante->posY);
+        
+                if (distance <= UniteAttaquante -> portee && (UniteAttaquante -> cibleAttaquable == cible -> maposition || UniteAttaquante -> cibleAttaquable == solEtAir )){
+                    AjouterUnite(&resultat, cible);
+                }
+            }
+        }
+    }
+    return resultat;
+}
