@@ -62,19 +62,26 @@ int main(int argc, char* argv[])
 
         //A COMMENTER quand vous en aurez assez de cliquer sur ces popups ^^
 
-        message("Welcome in TowerDfend","Ceci est un point de depart pour votre future interface de votre jeu TowerDefend");
-        message("et fin","ECHAP->quitter, S/C ET D/V les gerer les sauvegardes");
+        //message("Welcome in TowerDfend","Ceci est un point de depart pour votre future interface de votre jeu TowerDefend");
+        //message("et fin","ECHAP->quitter, S/C ET D/V les gerer les sauvegardes");
 
         /**********************************************************************/
         /*                                                                    */
         /*              DEFINISSEZ/INITIALISER ICI VOS VARIABLES              */
+
+        TListePlayer listeRoi = NULL;
+        TListePlayer listeHorde = NULL;
+        
+        listeRoi = creeTourRoi;
+        
+
+
         /*
-        // FIN de vos variables                                                              */
+        // FIN de vos variables                                               */
         /**********************************************************************/
 
         // boucle principale du jeu
         int cont = 1;
-        int unique = 1;  //a supprimer c'est utiliser pour la d�mo de dessineAttaque
         while ( cont != 0 ){   //VOUS DEVEZ GERER (DETECTER) LA FIN DU JEU -> tourRoiDetruite
                 SDL_PumpEvents(); //do events
                 efface_fenetre(pWinSurf);
@@ -85,21 +92,12 @@ int main(int argc, char* argv[])
                 /*                                                                     */
                 //APPELEZ ICI VOS FONCTIONS QUI FONT EVOLUER LE JEU
 
-                //a supprimer, c'est juste pour attirer votre attention sur comment est g�r� le chemin (un tableau 2D de coordonn�es)(regarder le corps de afficheCoordonneesParcours)
-                afficheCoordonneesParcours(tabParcours,NBCOORDPARCOURS);
 
                 /* dans votre fonction "combat" que vous appelerez ici, dans son code utiliser dessineAttaque
 
                 //exemple d'appel de dessineAttaque (factice car les unit�s n'appartiennent pas ici � aucune liste d'unit� (ni � la horde ni au Roi)
                 // c'est juste pour la d�mo, a supprimer donc
                 */
-
-                if (unique % 10 == 0) {
-                         printf("dessine Attaque %d\n", unique);
-                         dessineAttaque(pWinSurf, creeTourAir(4,15),creeDragon(5,17));
-                         dessineAttaque(pWinSurf, creeDragon(5,17),creeTourRoi(4,1));
-                } else printf("dessine Attaque %d\n", unique);
-                unique++;
 
                 // utiliser dessineAttaque dans votre fonction de combat va vous obliger � ajouter un argument li� � la SDL
                 // -> SDL_Surface *surface

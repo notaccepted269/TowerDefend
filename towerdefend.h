@@ -64,11 +64,11 @@ Tunite *creeTourRoi(int posx, int posy);
 /* fonctions du noyau que vous avez � coder
 
 bool tourRoiDetruite(TListePlayer player);
-void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu)
 
 
 Void combat(SDL_Surface *surface , Tunite * UniteAttaquante, Tunite * UniteCible);  //qui utilise dessineAttaque (de maSDL.h)
 */
+void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu) ;
 
 TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante) ; //retourne la liste des cibles possibles
 

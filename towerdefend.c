@@ -22,15 +22,6 @@ void initPlateauAvecNULL(TplateauJeu jeu,int largeur, int hauteur){
             jeu[i][j] = NULL;
         }
     }
-
-    //POUR LA DEMO D'AFFICHAGE UNIQUEMENT, A SUPPRIMER
-    //(les tours ici ne sont pas li�es aux listes des unit�s de vos joueurs)
-    jeu[5][3]=creeTourSol(5,3);
-    jeu[3][3]=creeTourAir(3,3);
-    jeu[4][1]=creeTourRoi(4,1);
-    jeu[4][15]=creeTourAir(4,15);
-    jeu[5][17]=creeDragon(5,17);
-    //FIN DEMO AFFICHAGE
 }
 
 
@@ -303,7 +294,8 @@ void SupprimerUnite(TListePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu
 
     if(*player == NULL) return;
     if(uniteDetruite == NULL) return;
-    if(uniteDetruite -> pointsDeVie == 0){
+    if(uniteDetruite -> pointsDeVie == 0)//voir si pointsDeVie <= 0 ne serait pas mieux
+    {
         while(current != NULL){
             if (current -> pdata == uniteDetruite){
             
@@ -364,4 +356,27 @@ TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante){
         }
     }
     return resultat;
+}
+
+/**
+ * Objectif   : Positionner toutes les unités d'un joueur sur le plateau de jeu
+ * Algorithme : Parcours linéaire de la liste chaînée du joueur
+ * Complexité : Temps O(n) | Espace O(1)
+ *
+ * @param player  Pointeur vers la tête de la liste du joueur
+ * @param jeu     Plateau de jeu (tableau 2D de pointeurs)
+ *
+ * Fonctionnement :
+ *   On parcourt la liste chaînée du joueur cellule par cellule. Pour chaque
+ *   unité, on utilise ses coordonnées (posX, posY) pour placer un pointeur
+ *   vers ses données directement dans la case correspondante du plateau.
+ *   Le parcourt s'arrête quand on atteint la fin de la liste (NULL).
+ */
+void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu){
+     T_cell *current = player;
+     while(current != NULL)
+     {
+        jeu[current->pdata->posX][current->pdata->posY] = current->pdata;        
+        current = current -> suiv;
+     }
 }
