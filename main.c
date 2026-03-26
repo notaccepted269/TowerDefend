@@ -72,7 +72,8 @@ int main(int argc, char* argv[])
         TListePlayer listeRoi = NULL;
         TListePlayer listeHorde = NULL;
         Tunite *tourRoi = creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]);
-        AjouterUnite(&listeRoi, tourRoi);        
+        AjouterUnite(&listeRoi, tourRoi); 
+        AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));       
 
         /*
         // FIN de vos variables                                               */
@@ -93,7 +94,7 @@ int main(int argc, char* argv[])
                 PositionnePlayerOnPlateau(listeRoi, jeu);
                 PositionnePlayerOnPlateau(listeHorde, jeu);
                 prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
-                
+
                 /* dans votre fonction "combat" que vous appelerez ici, dans son code utiliser dessineAttaque
 
                 //exemple d'appel de dessineAttaque (factice car les unit�s n'appartiennent pas ici � aucune liste d'unit� (ni � la horde ni au Roi)

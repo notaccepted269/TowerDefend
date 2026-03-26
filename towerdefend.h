@@ -7,7 +7,9 @@
 #define X 0
 #define Y 1
 
-//#include "SDL.h"
+#include <stdbool.h>
+#include "SDL.h"
+
 
 typedef enum{tourSol, tourAir, tourRoi, archer, chevalier, dragon, gargouille} TuniteDuJeu;
 typedef enum{sol, solEtAir, air } Tcible;
@@ -78,9 +80,10 @@ Tunite *creeDragon(int posx, int posy);
 Tunite *creeChevalier(int posx, int posy);
 
 
-void supprimerUnite(TListePlayer *player, Tunite *UniteDetruite);
+void SupprimerUnite(TListePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu);
 void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite);
 
 void swapData(T_cell *source, T_cell *destination);
 TListePlayer sortListPlayer(TListePlayer *player);
+
 #endif // TOWERDEFEND_H_INCLUDED
