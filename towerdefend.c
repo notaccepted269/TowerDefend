@@ -463,5 +463,36 @@ TListePlayer sortListPlayer(TListePlayer *player){
 	return *player;
 }
 
+/**
+ * Objectif   : Résoudre un combat entre une unité attaquante et une unité cible
+ * Algorithme : Soustraction directe des dégâts avec clamp à 0
+ * Complexité : Temps O(1) | Espace O(1)
+ *
+ * @param surface          Surface SDL sur laquelle afficher l'animation d'attaque
+ * @param UniteAttaquante  Pointeur vers l'unité qui attaque
+ * @param UniteCible       Pointeur vers l'unité qui reçoit les dégâts
+ *
+ * Fonctionnement :
+ *   On vérifie d'abord que l'unité attaquante peut agir (peutAttaquer == 1)
+ *   et que la cible est encore en vie (pointsDeVie > 0). Si les conditions
+ *   sont remplies, on soustrait les dégâts de l'attaquant aux points de vie
+ *   de la cible, en les limitant à 0 pour éviter toute valeur négative.
+ *   L'attaquant est ensuite marqué comme ayant déjà agi (peutAttaquer = 0)
+ *   et l'animation d'attaque est déclenchée via dessineAttaque().
+ */
+void combat(SDL_Surface *surface, Tunite *UniteAttaquante, Tunite *UniteCible)
+{
+	if (UniteAttaquante -> peutAttaquer == 1 && UniteCible -> pointsDeVie > 0)
+    {
+		UniteCible -> pointsDeVie -= UniteAttaquante -> degats;
+		
+        if (UniteCible -> pointsDeVie < 0){
+             UniteCible -> pointsDeVie = 0;
+        }
+		
+        UniteAttaquante -> peutAttaquer = 0;
+		
+        dessineAttaque(surface, UniteAttaquante, UniteCible);
+	}
 
-void combat(SDL_Surface *surface, Tunite *UniteAttaquante, Tunite *UniteCible);
+}

@@ -7,6 +7,8 @@
 #define X 0
 #define Y 1
 
+//#include "SDL.h"
+
 typedef enum{tourSol, tourAir, tourRoi, archer, chevalier, dragon, gargouille} TuniteDuJeu;
 typedef enum{sol, solEtAir, air } Tcible;
 
@@ -61,13 +63,11 @@ Tunite *creeTourSol(int posx, int posy);
 Tunite *creeTourAir(int posx, int posy);
 Tunite *creeTourRoi(int posx, int posy);
 
-/* fonctions du noyau que vous avez � coder
 
 bool tourRoiDetruite(TListePlayer player);
 
+void combat(SDL_Surface *surface , Tunite * UniteAttaquante, Tunite * UniteCible);  //qui utilise dessineAttaque (de maSDL.h)
 
-Void combat(SDL_Surface *surface , Tunite * UniteAttaquante, Tunite * UniteCible);  //qui utilise dessineAttaque (de maSDL.h)
-*/
 void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu) ;
 
 TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante) ; //retourne la liste des cibles possibles
