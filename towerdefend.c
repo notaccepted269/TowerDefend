@@ -248,6 +248,26 @@ Tunite *creeChevalier(int posx, int posy){
 }
 
 /**
+ * Objectif   : Vérifier si la tour du roi  est détruit
+ * Algorithme : Vérification directe sur la tête de liste
+ * Complexité : Temps O(1) | Espace O(1)
+ *
+ * @param playerRoi  Pointeur vers la cellule représentant le roi du joueur
+ * @return           true si le roi est détruit ou absent, false sinon
+ *
+ * Fonctionnement :
+ *   On considère le roi comme détruit dans trois cas : si la cellule est NULL,
+ *   si son pointeur de données est NULL, ou si ses points de vie sont à 0.
+ *   Dans tous les autres cas, le roi est encore en vie et la fonction retourne false.
+ */
+bool tourRoiDetruite(TListePlayer playerRoi){
+    if (playerRoi == NULL) return true;
+    if(playerRoi -> pdata == NULL || playerRoi -> pdata -> pointsDeVie == 0) return true;
+    else return false;
+}
+
+
+/**
  * Objectif   : Insère une unité en tête de la liste chaînée d'un joueur
  * Algorithme : Insertion en tête
  * Complexité : Temps O(1) | Espace O(1)
@@ -380,3 +400,68 @@ void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu){
         current = current -> suiv;
      }
 }
+
+/**
+ * Objectif   : Échanger les données entre deux cellules de la liste chaînée
+ * Algorithme : Swap par variable temporaire
+ * Complexité : Temps O(1) | Espace O(1)
+ *
+ * @param source       Pointeur vers la cellule source
+ * @param destination  Pointeur vers la cellule destination
+ *
+ * Fonctionnement :
+ *   On vérifie d'abord que les deux pointeurs sont valides. Si l'un d'eux
+ *   est NULL, un message d'erreur est affiché et aucun échange n'est effectué.
+ *   Sinon, on utilise un pointeur temporaire pour échanger les champs `pdata`
+ *   des deux cellules, sans modifier la structure chaînée elle-même.
+ */
+void swapData(T_cell *source, T_cell *destination)
+{
+	if (source == NULL || destination == NULL) {
+		printf("Erreur swapData ptr = NULL, la valeur cherchee n'existe pas");
+	} else {
+	Tunite *tmp = source -> pdata;
+	source -> pdata = destination -> pdata;
+	destination -> pdata = tmp;
+	}
+}
+
+/**
+ * Objectif   : Trier la liste chaînée d'un joueur par ordre croissant de points de vie
+ * Algorithme : Tri par sélection sur liste chaînée
+ * Complexité : Temps O(n²) | Espace O(1)
+ *
+ * @param player  Pointeur vers le pointeur de tête de la liste du joueur
+ * @return        La liste triée 
+ *
+ * Fonctionnement :
+ *   Pour chaque cellule courante, on recherche dans le reste de la liste
+ *   la cellule ayant le minimum de points de vie. Si ce minimum est différent
+ *   de la cellule courante, on échange leurs données via swapData(). On avance
+ *   ensuite jusqu'à la fin de la liste. On ne change pas la structure des chaînages ;
+ *   seules les données pointées par `pdata` sont permutées.
+ */
+TListePlayer sortListPlayer(TListePlayer *player){
+	T_cell *current = *player;
+	
+	while(current != NULL){
+		T_cell* min = current;
+		T_cell* next_Cell = current -> suiv;
+		while (next_Cell != NULL){
+			if (next_Cell -> pdata ->pointsDeVie < min -> pdata -> pointsDeVie)
+			{
+			min = next_Cell;
+			}
+			next_Cell = next_Cell -> suiv;
+		}
+		if (min != current){
+			swapData(current, min);
+		}
+		current = current -> suiv;
+	}
+	
+	return *player;
+}
+
+
+void combat(SDL_Surface *surface, Tunite *UniteAttaquante, Tunite *UniteCible);

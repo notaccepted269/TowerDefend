@@ -71,8 +71,8 @@ int main(int argc, char* argv[])
 
         TListePlayer listeRoi = NULL;
         TListePlayer listeHorde = NULL;
-        
-        AjouterUnite(&listeRoi, creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]));        
+        Tunite *tourRoi = creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]);
+        AjouterUnite(&listeRoi, tourRoi);        
 
         /*
         // FIN de vos variables                                               */
@@ -103,7 +103,9 @@ int main(int argc, char* argv[])
                 // utiliser dessineAttaque dans votre fonction de combat va vous obliger � ajouter un argument li� � la SDL
                 // -> SDL_Surface *surface
                 // regarder le prototype de dessineAttaque dans maSDL.c pour (mieux) comprendre
-
+                if (tourRoiDetruite(listeRoi)) {
+                  cont = 0;
+                }
                 /*                                                                     */
                 /*                                                                     */
                 // FIN DE VOS APPELS

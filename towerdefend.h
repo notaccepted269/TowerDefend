@@ -81,5 +81,6 @@ Tunite *creeChevalier(int posx, int posy);
 void supprimerUnite(TListePlayer *player, Tunite *UniteDetruite);
 void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite);
 
-
+void swapData(T_cell *source, T_cell *destination);
+TListePlayer sortListPlayer(TListePlayer *player);
 #endif // TOWERDEFEND_H_INCLUDED
