@@ -11,7 +11,7 @@
 TplateauJeu AlloueTab2D(int largeur, int hauteur){
     TplateauJeu jeu;
     jeu = (Tunite***)malloc(sizeof(Tunite**)*largeur);
-    for (int i=0;i<largeur;i++){
+    for (int i=0;i<largeur;i++){            
         jeu[i] = (Tunite**)malloc(sizeof(Tunite*)*hauteur);
     }
     return jeu;  //tab2D contenant des pointeurs

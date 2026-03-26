@@ -72,9 +72,7 @@ int main(int argc, char* argv[])
         TListePlayer listeRoi = NULL;
         TListePlayer listeHorde = NULL;
         
-        listeRoi = creeTourRoi;
-        
-
+        AjouterUnite(&listeRoi, creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]));        
 
         /*
         // FIN de vos variables                                               */
@@ -85,14 +83,17 @@ int main(int argc, char* argv[])
         while ( cont != 0 ){   //VOUS DEVEZ GERER (DETECTER) LA FIN DU JEU -> tourRoiDetruite
                 SDL_PumpEvents(); //do events
                 efface_fenetre(pWinSurf);
-                prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
+               //prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
 
                 /***********************************************************************/
                 /*                                                                     */
                 /*                                                                     */
                 //APPELEZ ICI VOS FONCTIONS QUI FONT EVOLUER LE JEU
-
-
+                initPlateauAvecNULL(jeu,LARGEURJEU,HAUTEURJEU);
+                PositionnePlayerOnPlateau(listeRoi, jeu);
+                PositionnePlayerOnPlateau(listeHorde, jeu);
+                prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
+                
                 /* dans votre fonction "combat" que vous appelerez ici, dans son code utiliser dessineAttaque
 
                 //exemple d'appel de dessineAttaque (factice car les unit�s n'appartiennent pas ici � aucune liste d'unit� (ni � la horde ni au Roi)
