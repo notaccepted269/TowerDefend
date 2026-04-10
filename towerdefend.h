@@ -32,6 +32,7 @@ typedef struct {
                             //seule fois par tour ;
                             //0 = a d�j� attaqu�, 1 = peut attaquer ce tour-ci
                             // � remettre � 1 au d�but de chaque tour
+    int indiceParcours;     // indice de l'unité dans tabParcours pour gérer son déplacement
 
     //struct Tunite *cible;   //NULL si pas de cible. mettre � jour ce pointeur permet l'aninamtion (simpliste certe) du tir
     //non utilis� au final -> utiliser directement dessineAttaque
@@ -85,5 +86,9 @@ void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite);
 
 void swapData(T_cell *source, T_cell *destination);
 TListePlayer sortListPlayer(TListePlayer *player);
+
+void deplacerHorde(TListePlayer player, int **tabParcours, TplateauJeu jeu);
+void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Surface* surface);
+void reinitialiserAttaques(TListePlayer player);
 
 #endif // TOWERDEFEND_H_INCLUDED

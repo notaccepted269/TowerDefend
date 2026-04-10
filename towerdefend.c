@@ -130,70 +130,74 @@ void affichePlateauConsole(TplateauJeu jeu, int largeur, int hauteur){
 
 Tunite *creeTourSol(int posx, int posy){
     Tunite *nouv = (Tunite*)malloc(sizeof(Tunite));
-    nouv->nom = tourSol;
-    nouv->cibleAttaquable = sol;
-    nouv->maposition = sol;
-    nouv->pointsDeVie = 500;
-    nouv->vitesseAttaque = 1.5;
-    nouv->degats = 120;
-    nouv->portee = 5;
-    nouv->vitessedeplacement = 0;
-    nouv->posX = posx;
-    nouv->posY = posy;
-    nouv->peutAttaquer = 1;
-    //nouv->cible = NULL;
+    nouv -> nom = tourSol;
+    nouv -> cibleAttaquable = sol;
+    nouv -> maposition = sol;
+    nouv -> pointsDeVie = 500;
+    nouv -> vitesseAttaque = 1.5;
+    nouv -> degats = 120;
+    nouv -> portee = 5;
+    nouv -> vitessedeplacement = 0;
+    nouv -> posX = posx;
+    nouv -> posY = posy;
+    nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = -1;
+    //nouv -> cible = NULL;
     return nouv;
 }
 
 Tunite *creeTourAir(int posx, int posy){
     Tunite *nouv = (Tunite*)malloc(sizeof(Tunite));
-    nouv->nom = tourAir;
-    nouv->cibleAttaquable = air;
-    nouv->maposition = sol;
-    nouv->pointsDeVie = 500;
-    nouv->vitesseAttaque = 1.0;
-    nouv->degats = 100;
-    nouv->portee = 3;
-    nouv->vitessedeplacement = 0;
-    nouv->posX = posx;
-    nouv->posY = posy;
-    nouv->peutAttaquer = 1;
-    //nouv->cible = NULL;
+    nouv -> nom = tourAir;
+    nouv -> cibleAttaquable = air;
+    nouv -> maposition = sol;
+    nouv -> pointsDeVie = 500;
+    nouv -> vitesseAttaque = 1.0;
+    nouv -> degats = 100;
+    nouv -> portee = 3;
+    nouv -> vitessedeplacement = 0;
+    nouv -> posX = posx;
+    nouv -> posY = posy;
+    nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = -1;
+    //nouv -> cible = NULL;
     return nouv;
 }
 
 Tunite *creeTourRoi(int posx, int posy){
     Tunite *nouv = (Tunite*)malloc(sizeof(Tunite));
-    nouv->nom = tourRoi;
-    nouv->cibleAttaquable = solEtAir;
-    nouv->maposition = sol;
-    nouv->pointsDeVie = 800;
-    nouv->vitesseAttaque = 1.2;
-    nouv->degats = 180;
-    nouv->portee = 4;
-    nouv->vitessedeplacement = 0;
-    nouv->posX = posx;
-    nouv->posY = posy;
-    nouv->peutAttaquer = 1;
-    //nouv->cible = NULL;
+    nouv -> nom = tourRoi;
+    nouv -> cibleAttaquable = solEtAir;
+    nouv -> maposition = sol;
+    nouv -> pointsDeVie = 800;
+    nouv -> vitesseAttaque = 1.2;
+    nouv -> degats = 180;
+    nouv -> portee = 4;
+    nouv -> vitessedeplacement = 0;
+    nouv -> posX = posx;
+    nouv -> posY = posy;
+    nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = -1;
+    //nouv -> cible = NULL;
     return nouv;
 }
 
 
 Tunite *creeDragon(int posx, int posy){
     Tunite *nouv = (Tunite*)malloc(sizeof(Tunite));
-    nouv->nom = dragon;
-    nouv->cibleAttaquable = solEtAir;
-    nouv->maposition = air;
-    nouv->pointsDeVie = 200;
-    nouv->vitesseAttaque = 1.1;
-    nouv->degats = 180;
-    nouv->portee = 2;
-    nouv->vitessedeplacement = 2;
-    nouv->posX = posx;
-    nouv->posY = posy;
-    nouv->peutAttaquer = 1;
-    //nouv->cible = NULL;
+    nouv -> nom = dragon;
+    nouv -> cibleAttaquable = solEtAir;
+    nouv -> maposition = air;
+    nouv -> pointsDeVie = 200;
+    nouv -> vitesseAttaque = 1.1;
+    nouv -> degats = 180;
+    nouv -> portee = 2;
+    nouv -> vitessedeplacement = 2;
+    nouv -> posX = posx;
+    nouv -> posY = posy;
+    nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = 0;
+    //nouv -> cible = NULL;
     return nouv;
 }
 
@@ -210,6 +214,7 @@ Tunite *creeGargouille(int posx, int posy){
     nouv -> posX = posx;
     nouv -> posY = posy;
     nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = 0;   
     //nouv -> cible = NULL;
     return nouv;
 }
@@ -227,6 +232,7 @@ Tunite *creeArcher(int posx, int posy){
     nouv -> posX = posx;
     nouv -> posY = posy;
     nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = 0;    
     //nouv -> cible = NULL;
     return nouv;
 }
@@ -243,6 +249,8 @@ Tunite *creeChevalier(int posx, int posy){
     nouv -> vitessedeplacement = 2.0;
     nouv -> posX = posx;
     nouv -> posY = posy;
+    nouv -> peutAttaquer = 1;
+    nouv -> indiceParcours = 0;
     //nouv -> cible = NULL;
     return nouv;
 }
@@ -369,7 +377,7 @@ TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante){
                cible = jeu[i][j];
                distance = abs(cible->posX - UniteAttaquante->posX) + abs(cible->posY - UniteAttaquante->posY);
         
-                if (distance <= UniteAttaquante -> portee && (UniteAttaquante -> cibleAttaquable == cible -> maposition || UniteAttaquante -> cibleAttaquable == solEtAir )){
+                if (distance <= UniteAttaquante -> portee && (cible != UniteAttaquante) && (UniteAttaquante -> cibleAttaquable == cible -> maposition || UniteAttaquante -> cibleAttaquable == solEtAir )){
                     AjouterUnite(&resultat, cible);
                 }
             }
@@ -495,4 +503,157 @@ void combat(SDL_Surface *surface, Tunite *UniteAttaquante, Tunite *UniteCible)
         dessineAttaque(surface, UniteAttaquante, UniteCible);
 	}
 
+}
+
+
+/**
+ * Objectif   : Réinitialiser le droit d'attaque de toutes les unités d'un joueur
+ *              en début de tour, afin que chacune puisse agir une fois par round.
+ * Algorithme : Parcours linéaire de la liste chaînée
+ * Complexité : Temps O(n) | Espace O(1)
+ *
+ * @param player  Tête de la liste chaînée du joueur à réinitialiser
+ *
+ * Fonctionnement :
+ *   On parcourt chaque cellule de la liste. Pour chaque unité rencontrée,
+ *   on remet le champ `peutAttaquer` à 1 (vrai). Cette fonction doit être
+ *   appelée en début de chaque nouveau tour, avant la phase de combat,
+ *   pour que les unités dont la valeur a été mise à 0 lors du tour précédent
+ *   puissent de nouveau agir.
+ */
+void reinitialiserAttaques(TListePlayer player){
+    T_cell* current = player;
+    while (current != NULL){
+        current->pdata->peutAttaquer = 1;
+            current = current -> suiv;
+    }
+}
+
+
+/**
+ * Objectif   : Avancer chaque unité de la horde d'une case sur le parcours prédéfini
+ * Algorithme : Parcours linéaire de la liste + accès direct au tableau de chemin
+ * Complexité : Temps O(n) | Espace O(1)
+ *
+ * @param player      Tête de la liste chaînée de la horde à déplacer
+ * @param tabParcours Tableau 2D des coordonnées du chemin (index → {x, y})
+ * @param jeu         Plateau de jeu (tableau 2D de pointeurs vers Tunite)
+ *
+ * Fonctionnement :
+ *   On parcourt toute la liste de la horde. Pour chaque unité, on lit son
+ *   `indiceParcours`. Si l'unité n'a pas;encore atteint la fin du chemin (i < NBCOORDPARCOURS - 1), 
+ *   on lit les coordonnées de la prochaine case dans tabParcours[i+1]. Le déplacement
+ *   n'est effectué que si la case de destination est libre (jeu[x][y] == NULL),
+ *   afin d'éviter les collisions entre unités. Lorsque le déplacement est validé,
+ *   on met à jour posX, posY et indiceParcours de l'unité.
+ *
+ *
+ */
+void deplacerHorde(TListePlayer player, int **tabParcours, TplateauJeu jeu){
+    T_cell *current = player;
+    while(current != NULL){
+        int i = current->pdata->indiceParcours;
+        if(i < NBCOORDPARCOURS - 1){
+        int prochainX = tabParcours[i+1][0];
+        int prochainY = tabParcours[i+1][1];
+        if(jeu[prochainX][prochainY] == NULL){
+            current->pdata->posX = prochainX;
+            current->pdata->posY = prochainY;
+            current->pdata->indiceParcours = i+1;
+            }  
+        }  
+    current = current->suiv;
+    }
+}
+
+
+/**
+ * Objectif   : Résoudre l'intégralité d'un round de combat entre les tours du roi
+ *              et la horde ennemie, en deux phases successives.
+ * Algorithme : Double parcours de liste chaînée + appels à quiEstAPortee / combat
+ * Complexité : Temps O(n * L²) | Espace O(k)  avec n = nb d'unités, L = dimension
+ *              du plateau, k = nb de cibles à portée
+ *
+ * @param roi      Pointeur vers la tête de liste des unités du roi (tours)
+ * @param horde    Pointeur vers la tête de liste des unités ennemies
+ * @param jeu      Plateau de jeu (tableau 2D de pointeurs vers Tunite)
+ * @param surface  Surface SDL pour l'affichage des animations d'attaque
+ *
+ * Fonctionnement :
+ *   Phase 1 — Tours du roi attaquent la horde :
+ *     On parcourt chaque tour du roi. Si elle peut attaquer (peutAttaquer == 1),
+ *     on récupère la liste des cibles à portée via quiEstAPortee(). La liste est
+ *     triée par PV croissants (priorité aux unités les plus faibles). La tour
+ *     attaque la première cible. Si celle-ci tombe à 0 PV, elle est supprimée
+ *     de la liste horde et du plateau via SupprimerUnite(). La liste temporaire
+ *     de cibles (T_cell uniquement, pas les pdata) est libérée après usage.
+ *
+ *   Phase 2 — Horde attaque les tours du roi :
+ *     Même logique en sens inverse : chaque unité de la horde cherche une cible
+ *     parmi les tours du roi. On sauvegarde `suivant` avant la boucle interne
+ *     car la cellule courante peut être supprimée si elle est elle-même la cible
+ *     d'une contre-attaque dans un autre appel (précaution défensive).
+ */
+void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Surface* surface) {
+    // Phase 1 : tours du roi → attaquent la horde
+    T_cell *tourCourante = *roi;
+
+    while (tourCourante != NULL) {
+        Tunite *attaquant = tourCourante->pdata;
+
+        if (attaquant->peutAttaquer == 1) {
+            TListePlayer ciblesAPortee = quiEstAPortee(jeu, attaquant);
+
+            if (ciblesAPortee != NULL) {
+                sortListPlayer(&ciblesAPortee);
+                Tunite *cible = ciblesAPortee->pdata;
+                combat(surface, attaquant, cible);
+
+                if (cible->pointsDeVie == 0) {
+                    SupprimerUnite(horde, cible, jeu);
+                }
+
+                /* Libère uniquement les T_cell temporaires, pas les pdata */
+                T_cell *tmp;
+                while (ciblesAPortee != NULL) {
+                    tmp = ciblesAPortee->suiv;
+                    free(ciblesAPortee);
+                    ciblesAPortee = tmp;
+                }
+            }
+        }
+        tourCourante = tourCourante->suiv;
+    }
+
+    // Phase 2 : horde → attaque la tour du roi
+    T_cell *hordeCourante = *horde;
+
+    while (hordeCourante != NULL) {
+        T_cell *suivant = hordeCourante->suiv;
+        Tunite *attaquant = hordeCourante->pdata;
+        
+        if (attaquant->peutAttaquer == 1) {
+            TListePlayer ciblesAPortee = quiEstAPortee(jeu, attaquant);
+
+            if (ciblesAPortee != NULL) {
+                sortListPlayer(&ciblesAPortee);
+                Tunite *cible = ciblesAPortee->pdata;
+                combat(surface, attaquant, cible);
+
+                /* Supprime la tour du roi si détruite */
+                if (cible->pointsDeVie == 0) {
+
+                    SupprimerUnite(roi, cible, jeu);
+                }
+                T_cell *tmp;
+                while (ciblesAPortee != NULL) {
+                    tmp = ciblesAPortee->suiv;
+                    free(ciblesAPortee);
+                    ciblesAPortee = tmp;
+                }
+            }
+        }
+        
+        hordeCourante = suivant;
+    }
 }

@@ -73,6 +73,12 @@ int main(int argc, char* argv[])
         TListePlayer listeHorde = NULL;
         Tunite *tourRoi = creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]);
         AjouterUnite(&listeRoi, tourRoi); 
+
+        Tunite *tourAir = creeTourAir(3, 10); 
+        Tunite *tourSol = creeTourSol(7, 10);
+        AjouterUnite(&listeRoi, tourAir);
+        AjouterUnite(&listeRoi, tourSol); 
+        
         AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));       
 
         /*
@@ -84,18 +90,32 @@ int main(int argc, char* argv[])
         while ( cont != 0 ){   //VOUS DEVEZ GERER (DETECTER) LA FIN DU JEU -> tourRoiDetruite
                 SDL_PumpEvents(); //do events
                 efface_fenetre(pWinSurf);
-               //prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
+                prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
 
                 /***********************************************************************/
                 /*                                                                     */
                 /*                                                                     */
                 //APPELEZ ICI VOS FONCTIONS QUI FONT EVOLUER LE JEU
-                initPlateauAvecNULL(jeu,LARGEURJEU,HAUTEURJEU);
+                printf("avant initPlateau\n");
+                initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);
+                printf("apres initPlateau\n");
+                printf("avant PositionneRoi\n");
                 PositionnePlayerOnPlateau(listeRoi, jeu);
+                printf("apres PositionneRoi\n");
+                printf("avant PositionneHorde\n");
                 PositionnePlayerOnPlateau(listeHorde, jeu);
-                prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
-
-                /* dans votre fonction "combat" que vous appelerez ici, dans son code utiliser dessineAttaque
+                printf("apres PositionneHorde\n");
+                printf("avant deplacerHorde\n");
+                deplacerHorde(listeHorde, tabParcours, jeu);
+                printf("avant phaseCombat\n");
+                printf("debut phaseCombat\n");
+                phaseCombat(&listeRoi, &listeHorde, jeu, pWinSurf);
+                printf("avant reinitRoi\n");
+                reinitialiserAttaques(listeRoi);
+                printf("avant reinitHorde\n");
+                reinitialiserAttaques(listeHorde);
+                printf("fin du tour\n");
+                        /* dans votre fonction "combat" que vous appelerez ici, dans son code utiliser dessineAttaque
 
                 //exemple d'appel de dessineAttaque (factice car les unit�s n'appartiennent pas ici � aucune liste d'unit� (ni � la horde ni au Roi)
                 // c'est juste pour la d�mo, a supprimer donc
