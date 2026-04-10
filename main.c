@@ -79,7 +79,10 @@ int main(int argc, char* argv[])
         AjouterUnite(&listeRoi, tourAir);
         AjouterUnite(&listeRoi, tourSol); 
         
-        AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));       
+        AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));     
+
+        srand(time(NULL));
+  
 
         /*
         // FIN de vos variables                                               */
@@ -96,6 +99,28 @@ int main(int argc, char* argv[])
                 /*                                                                     */
                 /*                                                                     */
                 //APPELEZ ICI VOS FONCTIONS QUI FONT EVOLUER LE JEU
+                int probabilite = 5 + rand() % (60 - 5 + 1);
+                if ((rand() % 100) < probabilite){
+                        if(jeu[tabParcours[0][0]][tabParcours[0][1]] == NULL){
+                                int type = rand() % 4;
+                                switch (type)
+                                {
+                                case 0: AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));
+                                        break;
+                                case 1: AjouterUnite(&listeHorde, creeArcher(tabParcours[0][0], tabParcours[0][1]));
+                                        break;
+                                case 2: AjouterUnite(&listeHorde, creeGargouille(tabParcours[0][0], tabParcours[0][1]));
+                                        break;                                                                              
+                                case 3: AjouterUnite(&listeHorde, creeChevalier(tabParcours[0][0], tabParcours[0][1]));
+                                        break;                               
+                                }
+                        }
+                }
+
+
+
+
+
                 printf("avant initPlateau\n");
                 initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);
                 printf("apres initPlateau\n");
