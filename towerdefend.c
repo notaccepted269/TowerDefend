@@ -256,18 +256,23 @@ Tunite *creeChevalier(int posx, int posy){
     return nouv;
 }
 
+
+//====================================================================
+//                      FONCTION NOYAU
+//====================================================================
+
+
 /**
- * Objectif   : Vérifier si la tour du roi  est détruit
- * Algorithme : Vérification directe sur la tête de liste
+ * Objectif   : Vérifier si la tour du roi a été détruite.
+ * Algorithme : Vérification directe sur le pointeur et les points de vie.
  * Complexité : Temps O(1) | Espace O(1)
  *
- * @param playerRoi  Pointeur vers la cellule représentant le roi du joueur
- * @return           true si le roi est détruit ou absent, false sinon
+ * @param tourRoi Pointeur vers l'unité représentant le roi.
+ * @return        True si le roi est détruit ou absent, false sinon.
  *
  * Fonctionnement :
- *   On considère le roi comme détruit dans trois cas : si la cellule est NULL,
- *   si son pointeur de données est NULL, ou si ses points de vie sont à 0.
- *   Dans tous les autres cas, le roi est encore en vie et la fonction retourne false.
+ * On considère le roi comme détruit si son pointeur est NULL 
+ * ou si ses points de vie sont tombés à 0 (ou moins).
  */
 bool tourRoiDetruite(Tunite *tourRoi){
     if (tourRoi == NULL){
@@ -284,7 +289,7 @@ bool tourRoiDetruite(Tunite *tourRoi){
 
 /**
  * Objectif   : Insère une unité en tête de la liste chaînée d'un joueur
- * Algorithme : Insertion en tête
+ * Algorithme : Insertion standart en tête de liste
  * Complexité : Temps O(1) | Espace O(1)
  *
  * @param player        Pointeur vers la tête de la liste du joueur
@@ -307,6 +312,7 @@ void AjouterUnite(TListePlayer *player, Tunite *nouvelleUnite){
     newPlayer -> suiv = *player;
     *player = newPlayer; 
 }
+
 
 /**
  * Objectif   : Supprimer une unité morte de la liste d'un joueur et du plateau
@@ -352,26 +358,25 @@ void SupprimerUnite(TListePlayer *player, Tunite *uniteDetruite, TplateauJeu jeu
     }
 }
 
+
 /**
- * Objectif   : Construire la liste de toutes les unités ennemies à portée d'attaque
- *              d'une unité attaquante, en tenant compte de sa portée et de ses cibles valides.
- * Algorithme : Balayage exhaustif du plateau (double boucle) + distance de Manhattan
- * Complexité : Temps O(n²) | Espace O(k) avec k = nombre d'unités à portée
+ * Objectif   : Retourner la liste de toutes les unités ennemies à portée d'attaque
+ * Algorithme : Double boucle sur le plateau avec filtre distance + camp + type de cible
+ * Complexité : Temps O(n*m) | Espace O(k) avec k = nombre de cibles valides
  *
- * @param jeu              Plateau de jeu (tableau 2D de pointeurs vers Tunite)
- * @param UniteAttaquante  Pointeur vers l'unité qui effectue l'attaque
- * @return                 Liste chaînée des unités situées à portée et attaquables
+ * @param jeu              Plateau de jeu (tableau 2D de pointeurs)
+ * @param UniteAttaquante  Pointeur vers l'unité qui attaque
+ * @return                 Liste chaînée des unités ennemies attaquables
  *
  * Fonctionnement :
- *   On balaye chaque case du plateau. Pour chaque case non vide, on calcule
- *   la distance de Manhattan entre la cible et l'attaquant :
- *       d = |xCible - xAttaquant| + |yCible - yAttaquant|
- *   Une unité est ajoutée au résultat si et seulement si :
- *     1. d <= portée de l'attaquant
- *     2. Le type de position de la cible (sol, air) est attaquable par l'unité
- *        (cibleAttaquable == maposition  OU  cibleAttaquable == solEtAir)
- *   La liste résultat est construite via AjouterUnite et retournée en fin de parcours.
- *
+ *   On commence par déterminer si l'attaquant est une tour (roi/sol/air).
+ *   On parcourt ensuite chaque case du plateau ; pour chaque unité présente,
+ *   on calcule la distance de Manhattan entre elle et l'attaquant.
+ *   Une cible est ajoutée au résultat si et seulement si :
+ *     - elle est dans la portée de l'attaquant,
+ *     - elle n'est pas l'attaquant lui-même,
+ *     - elle appartient au camp adverse (anti-tir allié),
+ *     - son type de position correspond à ce que l'attaquant peut cibler.
  */
 TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante){
     TListePlayer resultat = NULL;
@@ -403,6 +408,7 @@ TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante){
     return resultat;
 }
 
+
 /**
  * Objectif   : Positionner toutes les unités d'un joueur sur le plateau de jeu
  * Algorithme : Parcours linéaire de la liste chaînée du joueur
@@ -425,6 +431,7 @@ void PositionnePlayerOnPlateau(TListePlayer player, TplateauJeu jeu){
         current = current -> suiv;
      }
 }
+
 
 /**
  * Objectif   : Échanger les données entre deux cellules de la liste chaînée
@@ -450,6 +457,7 @@ void swapData(T_cell *source, T_cell *destination)
 	destination -> pdata = tmp;
 	}
 }
+
 
 /**
  * Objectif   : Trier la liste chaînée d'un joueur par ordre croissant de points de vie
@@ -487,6 +495,7 @@ TListePlayer sortListPlayer(TListePlayer *player){
 	
 	return *player;
 }
+
 
 /**
  * Objectif   : Résoudre un combat entre une unité attaquante et une unité cible
@@ -675,9 +684,23 @@ void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Su
     }
 }
 
-/* Objectif  : Vérifier si une case (x,y) appartient au chemin de la horde
- * Algorithme: Recherche linéaire dans tabParcours
- * Complexité: Temps O(NBCOORDPARCOURS) | Espace O(1)
+
+/**
+ * Objectif   : Vérifier si une case (x, y) appartient au chemin emprunté par la horde.
+ * Algorithme : Recherche linéaire dans le tableau de coordonnées du parcours.
+ * Complexité : Temps O(NBCOORDPARCOURS) | Espace O(1)
+ *
+ * @param x           Coordonnée en abscisse de la case à tester.
+ * @param y           Coordonnée en ordonnée de la case à tester.
+ * @param tabParcours Tableau 2D des coordonnées du chemin (index → {x, y}).
+ * @return            True si (x, y) figure parmi les cases du chemin, false sinon.
+ *
+ * Fonctionnement :
+ *   On itère sur chaque entrée du tableau tabParcours. Dès qu'une paire de
+ *   coordonnées correspond exactement à (x, y), on retourne immédiatement true.
+ *   Si aucune correspondance n'est trouvée après le parcours complet, on retourne false.
+ *   Cette fonction sert notamment à interdire le placement de tours sur le chemin
+ *   de la horde lors de la phase de construction.
  */
 bool estSurChemin(int x, int y, int **tabParcours) {
     for (int i = 0; i < NBCOORDPARCOURS; i++) {
@@ -688,6 +711,30 @@ bool estSurChemin(int x, int y, int **tabParcours) {
 }
 
 
+/**
+ * Objectif   : Générer aléatoirement un chemin valide que la horde empruntera
+ *              du bas du plateau jusqu'à la zone du roi, en respectant des contraintes
+ *              de cohérence directionnelle.
+ * Algorithme : Marche aléatoire dirigée (haut prioritaire) avec règles anti-zigzag.
+ * Complexité : Temps O(NBCOORDPARCOURS) | Espace O(NBCOORDPARCOURS)
+ *
+ * @return  Tableau 2D alloué dynamiquement de taille [NBCOORDPARCOURS][2],
+ *          où chaque ligne contient les coordonnées {x, y} d'une case du chemin,
+ *          dans l'ordre de progression. À libérer par l'appelant.
+ *
+ * Fonctionnement :
+ *   On alloue le tableau de chemin puis on initialise le point de départ au
+ *   centre bas du plateau (x = LARGEURJEU/2, y = HAUTEURJEU-1). À chaque étape,
+ *   on choisit aléatoirement une direction (haut=0, droite=1, gauche=2) et une
+ *   distance (1 à 4 cases). Plusieurs règles contraignent les choix :
+ *     - Le tout premier mouvement est toujours vers le haut.
+ *     - On ne peut pas enchaîner deux directions horizontales opposées sans
+ *       au moins 2 cases de montée intermédiaires (anti-zigzag).
+ *     - Si le mouvement choisi sort du plateau ou viole une contrainte, on
+ *       replie sur un mouvement de secours (haut ou latéral vers le centre).
+ *   Les cases de chaque segment sont écrites dans le tableau via les helpers
+ *   ecritCheminVersleHaut(), ecritCheminVerslaDroite() et ecritCheminVerslaGauche().
+ */
 int **initChemin() {
     int **chemin = (int**)malloc(sizeof(int*) * NBCOORDPARCOURS);
     for(int j = 0; j < NBCOORDPARCOURS; j++){
@@ -706,7 +753,7 @@ int **initChemin() {
     while (i < NBCOORDPARCOURS) {
         int choixDirection;
         
-        int distance = (rand() % 4) + 1;
+        int distance = (rand() % 4) + 2;
 
         if (distance > distanceMaxRestante) {
             distance = distanceMaxRestante;
