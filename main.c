@@ -15,6 +15,7 @@
 /*--------- Main ---------------------*/
 int main(int argc, char* argv[])
 {
+    srand(time(NULL));
     SDL_Window *pWindow;
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -82,6 +83,8 @@ int main(int argc, char* argv[])
         AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));     
 
         srand(time(NULL));
+
+        int compteur_tour = 0;
   
 
         /*
@@ -99,8 +102,10 @@ int main(int argc, char* argv[])
                 /*                                                                     */
                 /*                                                                     */
                 //APPELEZ ICI VOS FONCTIONS QUI FONT EVOLUER LE JEU
-                int probabilite = 5 + rand() % (60 - 5 + 1);
-                if ((rand() % 100) < probabilite){
+
+                //Probabilité d'apparition de la horde
+                int probabilite_horde = 5 + rand() % (60 - 5 + 1);
+                if ((rand() % 100) < probabilite_horde){
                         if(jeu[tabParcours[0][0]][tabParcours[0][1]] == NULL){
                                 int type = rand() % 4;
                                 switch (type)
@@ -119,6 +124,66 @@ int main(int argc, char* argv[])
 
 
 
+                //Probabilité d'apparition des tours
+                // Génère une probabilité aléatoire entre 15 et 50 pour l'apparition d'une tour
+                int probabilite_tour = 15 + rand() % (50 - 15 + 1);
+                
+                // Si le nombre aléatoire est inférieur à la probabilité ET que le tour est un multiple de 5
+                // (permets d'espacer les apparitions de tours)
+                if ((rand () % 100) < probabilite_tour && compteur_tour % 5 == 0){
+                                // Directions possibles : droite, gauche, bas, haut
+                                int dx[] = {1, -1, 0, 0};
+                                int dy[] = {0, 0, 1, -1};
+                                
+                                // Tableaux pour stocker les positions valides autour du chemin
+                                int validX[NBCOORDPARCOURS * 4];
+                                int validY[NBCOORDPARCOURS * 4];
+                                int nbValides = 0;
+
+                                // Parcourt tous les points du chemin pour trouver les cases adjacentes valides
+                                for (int i = 0; i < NBCOORDPARCOURS; i++) {
+                                                for (int d = 0; d < 4; d++) {
+                                                                // Calcule la position adjacente
+                                                                int nx = tabParcours[i][X] + dx[d];
+                                                                int ny = tabParcours[i][Y] + dy[d];
+
+                                                                // Vérifie que la case est dans les limites du plateau
+                                                                if (nx < 0 || nx >= LARGEURJEU || ny < 0 || ny >= HAUTEURJEU) continue;
+                                                                // Vérifie que la case n'est pas sur le chemin
+                                                                if (estSurChemin(nx, ny, tabParcours)) continue;
+                                                                // Vérifie que la case est vide (pas déjà occupée par une unité)
+                                                                if (jeu[nx][ny] != NULL) continue;
+
+                                                                // Évite les doublons dans la liste des positions valides
+                                                                bool dejaVu = false;
+                                                                for (int k = 0; k < nbValides; k++)
+                                                                                if (validX[k] == nx && validY[k] == ny) { dejaVu = true; break; }
+                                                                if (!dejaVu) { validX[nbValides] = nx; validY[nbValides++] = ny; }
+                                                }
+                                }
+
+                                // Si au moins une position valide existe, on place une tour
+                                if (nbValides > 0) {
+                                                // Choisit aléatoirement une des positions valides
+                                                int choixCase = rand() % nbValides;
+                                                Tunite * tour  = NULL;
+                                                
+                                                // Choix aléatoire du type de tour : Air ou Sol
+                                                switch (rand() % 2){
+                                                                case 0: tour = creeTourAir(validX[choixCase], validY[choixCase]);
+                                                                                break;
+                                                                case 1: tour = creeTourSol(validX[choixCase], validY[choixCase]);
+                                                                                break;
+                                                }
+
+                                                // Ajoute la tour créée à la liste des unités du roi
+                                                if(tour != NULL) {
+                                                                AjouterUnite(&listeRoi, tour);
+                                                }
+                                }
+                }
+                // Incrémente le compteur de tours
+                compteur_tour++;
 
 
                 printf("avant initPlateau\n");

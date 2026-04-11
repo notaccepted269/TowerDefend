@@ -90,5 +90,6 @@ TListePlayer sortListPlayer(TListePlayer *player);
 void deplacerHorde(TListePlayer player, int **tabParcours, TplateauJeu jeu);
 void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Surface* surface);
 void reinitialiserAttaques(TListePlayer player);
+bool estSurChemin(int x, int y, int **tabParcours);
 
 #endif // TOWERDEFEND_H_INCLUDED

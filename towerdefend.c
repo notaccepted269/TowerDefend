@@ -71,7 +71,7 @@ void ecritCheminVerslaGauche(int **chemin, int *ichemin, int *xdepart, int *ydep
     else printf("erreur longueur chemin\n");
 }
 
-int **initChemin(){
+/*int **initChemin(){
     int **chemin = (int**)malloc(sizeof(int*)*NBCOORDPARCOURS);
 
     for (int j=0;j<NBCOORDPARCOURS;j++){
@@ -94,7 +94,7 @@ int **initChemin(){
     ecritCheminVersleHaut(chemin, &i, &xdepart, &ydepart, 3, &distanceMaxRestante);
 
     return chemin;  //tab2D contenant des pointeurs
-}
+}*/
 
 void afficheCoordonneesParcours(int **chemin, int nbcoord){
     printf("Liste coordonnees: ");
@@ -653,7 +653,94 @@ void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Su
                 }
             }
         }
-        
+
         hordeCourante = suivant;
     }
 }
+
+/* Objectif  : Vérifier si une case (x,y) appartient au chemin de la horde
+ * Algorithme: Recherche linéaire dans tabParcours
+ * Complexité: Temps O(NBCOORDPARCOURS) | Espace O(1)
+ */
+bool estSurChemin(int x, int y, int **tabParcours) {
+    for (int i = 0; i < NBCOORDPARCOURS; i++) {
+        if (tabParcours[i][X] == x && tabParcours[i][Y] == y)
+            return true;
+    }
+    return false;
+}
+
+
+int **initChemin() {
+    int **chemin = (int**)malloc(sizeof(int*) * NBCOORDPARCOURS);
+    for(int j = 0; j < NBCOORDPARCOURS; j++){
+        chemin[j] = (int*)malloc(sizeof(int) * 2);
+    }
+
+    int ydepart = HAUTEURJEU - 1;   // 18
+    int xdepart = LARGEURJEU / 2;   // 5 = milieu de la fenetre de 11 de largeur (0-10)
+    int i = 0;                      //parcourt les i cases du chemin
+    int distanceMaxRestante = NBCOORDPARCOURS; 
+
+    int premierMouvement = 1;
+    int dernierDirHorizontale = 0;
+    int casesHautDepuisHorizontale = 0;
+
+    while( i < NBCOORDPARCOURS){
+        int choixDirection;
+        int distance = (rand() % 4) + 2; //choix de case entre 2 et 4 cases
+
+        if(distance > distanceMaxRestante){
+            distance = distanceMaxRestante;
+        }
+
+        // Pour que le chemin commence TOUJOURS par le haut
+        if(premierMouvement){
+            choixDirection = 0;
+            premierMouvement = 0;
+        } else {
+            choixDirection = rand() % 3;
+        }
+
+        int mouvementValide = 0;
+        if (choixDirection == 0){
+            mouvementValide = 1;
+        }   else if (choixDirection == 1){
+                //Verifie qu'on ne depasse pas la limite ET qu'on ne fait pas demi-tour
+                if ((xdepart + distance < LARGEURJEU) && (dernierDirHorizontale != 2 || casesHautDepuisHorizontale >= 2)){
+                    mouvementValide = 1;
+            }  
+        }   else if (choixDirection == 2){
+                //Verifie qu'on ne depasse pas la limite ET qu'on ne fait pas demi-tour
+                if((xdepart - distance >= 0) && (dernierDirHorizontale != 1 || casesHautDepuisHorizontale >= 2)){
+                    mouvementValide = 1;
+            }
+        }
+        
+        if (!mouvementValide) {
+            choixDirection = 0; 
+            distance = 1; 
+            if (distance > distanceMaxRestante) distance = distanceMaxRestante;
+        }
+
+        if (choixDirection == 0) {
+            ecritCheminVersleHaut(chemin, &i, &xdepart, &ydepart, distance, &distanceMaxRestante);
+            casesHautDepuisHorizontale += distance; 
+        } 
+        else if (choixDirection == 1) {
+            ecritCheminVerslaDroite(chemin, &i, &xdepart, &ydepart, distance, &distanceMaxRestante);
+            dernierDirHorizontale = 1;       
+            casesHautDepuisHorizontale = 0;    
+        } 
+        else if (choixDirection == 2) {
+            ecritCheminVerslaGauche(chemin, &i, &xdepart, &ydepart, distance, &distanceMaxRestante);
+            dernierDirHorizontale = 2;       
+            casesHautDepuisHorizontale = 0;    
+        }
+
+        distanceMaxRestante = NBCOORDPARCOURS - i;
+        }
+
+    return chemin;
+}
+
