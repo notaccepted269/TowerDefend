@@ -67,7 +67,7 @@ Tunite *creeTourAir(int posx, int posy);
 Tunite *creeTourRoi(int posx, int posy);
 
 
-bool tourRoiDetruite(TListePlayer player);
+bool tourRoiDetruite(Tunite *leRoi);
 
 void combat(SDL_Surface *surface , Tunite * UniteAttaquante, Tunite * UniteCible);  //qui utilise dessineAttaque (de maSDL.h)
 

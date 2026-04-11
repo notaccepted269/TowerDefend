@@ -4,6 +4,7 @@
 
 #include "SDL.h"
 #include "towerdefend.h"
+#include "maSDL.h"
 
 
 //typedef Tunite* ** TplateauJeu;
@@ -268,10 +269,16 @@ Tunite *creeChevalier(int posx, int posy){
  *   si son pointeur de données est NULL, ou si ses points de vie sont à 0.
  *   Dans tous les autres cas, le roi est encore en vie et la fonction retourne false.
  */
-bool tourRoiDetruite(TListePlayer playerRoi){
-    if (playerRoi == NULL) return true;
-    if(playerRoi -> pdata == NULL || playerRoi -> pdata -> pointsDeVie == 0) return true;
-    else return false;
+bool tourRoiDetruite(Tunite *tourRoi){
+    if (tourRoi == NULL){
+        return true;
+    }
+
+    if (tourRoi -> pointsDeVie <= 0){
+        return true;
+    }
+
+    return false;
 }
 
 
@@ -371,13 +378,23 @@ TListePlayer quiEstAPortee(TplateauJeu jeu, Tunite *UniteAttaquante){
     int distance = 0;
     Tunite *cible;
 
+    int attaquantEstRoi = (UniteAttaquante->nom == tourSol || UniteAttaquante->nom == tourAir || UniteAttaquante->nom == tourRoi);
+
     for(int i = 0; i < LARGEURJEU; i++){
         for(int j = 0; j < HAUTEURJEU; j++){
             if(jeu[i][j] != NULL){
                cible = jeu[i][j];
                distance = abs(cible->posX - UniteAttaquante->posX) + abs(cible->posY - UniteAttaquante->posY);
         
-                if (distance <= UniteAttaquante -> portee && (cible != UniteAttaquante) && (UniteAttaquante -> cibleAttaquable == cible -> maposition || UniteAttaquante -> cibleAttaquable == solEtAir )){
+                int cibleEstRoi = (cible->nom == tourSol || 
+                                   cible->nom == tourAir || 
+                                   cible->nom == tourRoi);
+
+                if (distance <= UniteAttaquante -> portee && 
+                    (cible != UniteAttaquante) && 
+                    (attaquantEstRoi != cibleEstRoi) && // ANTI-TIR ALLIÉ 
+                    (UniteAttaquante -> cibleAttaquable == cible -> maposition || UniteAttaquante -> cibleAttaquable == solEtAir )){
+                    
                     AjouterUnite(&resultat, cible);
                 }
             }
@@ -677,70 +694,104 @@ int **initChemin() {
         chemin[j] = (int*)malloc(sizeof(int) * 2);
     }
 
-    int ydepart = HAUTEURJEU - 1;   // 18
-    int xdepart = LARGEURJEU / 2;   // 5 = milieu de la fenetre de 11 de largeur (0-10)
-    int i = 0;                      //parcourt les i cases du chemin
+    int ydepart = HAUTEURJEU - 1;   // On commence tout en bas (18)
+    int xdepart = LARGEURJEU / 2;   // On commence au milieu (5)
+    int i = 0;                      // Compteur pour les cases du chemin
     int distanceMaxRestante = NBCOORDPARCOURS; 
 
     int premierMouvement = 1;
-    int dernierDirHorizontale = 0;
+    int dernierDirHorizontale = 0; // 0 = rien, 1 = droite, 2 = gauche
     int casesHautDepuisHorizontale = 0;
 
-    while( i < NBCOORDPARCOURS){
+    while (i < NBCOORDPARCOURS) {
         int choixDirection;
-        int distance = (rand() % 4) + 2; //choix de case entre 2 et 4 cases
+        
+        int distance = (rand() % 4) + 1;
 
-        if(distance > distanceMaxRestante){
+        if (distance > distanceMaxRestante) {
             distance = distanceMaxRestante;
         }
 
-        // Pour que le chemin commence TOUJOURS par le haut
-        if(premierMouvement){
-            choixDirection = 0;
+        // Le tout premier mouvement doit obligatoirement être vers le haut
+        if (premierMouvement == 1) {
+            choixDirection = 0; 
             premierMouvement = 0;
         } else {
-            choixDirection = rand() % 3;
+            choixDirection = rand() % 3; 
         }
 
-        int mouvementValide = 0;
-        if (choixDirection == 0){
-            mouvementValide = 1;
-        }   else if (choixDirection == 1){
-                //Verifie qu'on ne depasse pas la limite ET qu'on ne fait pas demi-tour
-                if ((xdepart + distance < LARGEURJEU) && (dernierDirHorizontale != 2 || casesHautDepuisHorizontale >= 2)){
+        int mouvementValide = 0; 
+
+        
+        if (choixDirection == 0) { 
+            // C'est la direction HAUT
+            if (ydepart - distance >= 0) {
+                mouvementValide = 1;
+            } else if (ydepart > 0) {
+                distance = ydepart; 
+                mouvementValide = 1;
+            }
+        } 
+        else if (choixDirection == 1) { 
+            // C'est la direction DROITE
+            if (xdepart + distance < LARGEURJEU) { 
+                
+                // Règle : on ne peut pas aller à droite si on vient d'aller à gauche
+                if (dernierDirHorizontale != 2) {
                     mouvementValide = 1;
-            }  
-        }   else if (choixDirection == 2){
-                //Verifie qu'on ne depasse pas la limite ET qu'on ne fait pas demi-tour
-                if((xdepart - distance >= 0) && (dernierDirHorizontale != 1 || casesHautDepuisHorizontale >= 2)){
+                } else if (casesHautDepuisHorizontale >= 2) {
                     mouvementValide = 1;
+                }
+            }
+        } 
+        else if (choixDirection == 2) { 
+            if (xdepart - distance >= 0) { 
+                
+                // Règle : on ne peut pas aller à gauche si on vient d'aller à droite
+                if (dernierDirHorizontale != 1) {
+                    mouvementValide = 1;
+                } else if (casesHautDepuisHorizontale >= 2) {
+                    mouvementValide = 1;
+                }
             }
         }
-        
-        if (!mouvementValide) {
-            choixDirection = 0; 
-            distance = 1; 
-            if (distance > distanceMaxRestante) distance = distanceMaxRestante;
+
+        if (mouvementValide == 0) {
+            if (ydepart == 0) {
+                if (xdepart < LARGEURJEU / 2) {
+                    choixDirection = 1; // On va à droite
+                } else {
+                    choixDirection = 2; // On va à gauche
+                }
+                distance = 1;
+            } else {
+                choixDirection = 0; 
+                distance = 1; 
+            }
+            
+
+            if (distance > distanceMaxRestante) {
+                distance = distanceMaxRestante;
+            }
         }
 
         if (choixDirection == 0) {
             ecritCheminVersleHaut(chemin, &i, &xdepart, &ydepart, distance, &distanceMaxRestante);
-            casesHautDepuisHorizontale += distance; 
+            casesHautDepuisHorizontale = casesHautDepuisHorizontale + distance; 
         } 
         else if (choixDirection == 1) {
             ecritCheminVerslaDroite(chemin, &i, &xdepart, &ydepart, distance, &distanceMaxRestante);
             dernierDirHorizontale = 1;       
-            casesHautDepuisHorizontale = 0;    
+            casesHautDepuisHorizontale = 0; // On remet le compteur de montée à zéro
         } 
         else if (choixDirection == 2) {
             ecritCheminVerslaGauche(chemin, &i, &xdepart, &ydepart, distance, &distanceMaxRestante);
             dernierDirHorizontale = 2;       
-            casesHautDepuisHorizontale = 0;    
+            casesHautDepuisHorizontale = 0; 
         }
 
         distanceMaxRestante = NBCOORDPARCOURS - i;
-        }
+    }
 
     return chemin;
 }
-

@@ -214,9 +214,11 @@ int main(int argc, char* argv[])
                 // utiliser dessineAttaque dans votre fonction de combat va vous obliger � ajouter un argument li� � la SDL
                 // -> SDL_Surface *surface
                 // regarder le prototype de dessineAttaque dans maSDL.c pour (mieux) comprendre
-                if (tourRoiDetruite(listeRoi)) {
-                  cont = 0;
+                if (tourRoiDetruite(tourRoi)){
+                        cont = 0;
                 }
+
+
                 /*                                                                     */
                 /*                                                                     */
                 // FIN DE VOS APPELS
