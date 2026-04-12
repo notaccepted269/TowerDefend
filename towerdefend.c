@@ -1039,3 +1039,13 @@ void chargerSequentielle(TListePlayer *listeRoi, TListePlayer *listeHorde, Tplat
     fclose(f);
     printf("Chargement sequentiel (.tds) reussi !\n");
 }
+
+Tunite* trouverTourRoi(TListePlayer listeRoi){
+    T_cell *current = listeRoi;
+    while(current != NULL){
+        if(current->pdata->nom == tourRoi)
+            return current->pdata;
+        current = current->suiv;
+    }
+    return NULL;
+}

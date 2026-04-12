@@ -94,5 +94,6 @@ void sauvegarderBinaire(TListePlayer listeRoi, TListePlayer listeHorde);
 void chargerBinaire(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu);
 void sauvegarderSequentielle(TListePlayer listeRoi, TListePlayer listeHorde);
 void chargerSequentielle(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu);
+Tunite* trouverTourRoi(TListePlayer listeRoi);
 
 #endif // TOWERDEFEND_H_INCLUDED

@@ -217,6 +217,10 @@ int main(int argc, char* argv[])
                         chargerSequentielle(&listeRoi, &listeHorde, jeu);
                         PositionnePlayerOnPlateau(listeRoi, jeu);
                         PositionnePlayerOnPlateau(listeHorde, jeu);
+                        tourRoi = trouverTourRoi(listeRoi); 
+                        initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);  
+                        PositionnePlayerOnPlateau(listeRoi, jeu);           
+                        PositionnePlayerOnPlateau(listeHorde, jeu); 
                         message("Sauvegarde","Chargement de la sauvegarde sequentielle");
                         
 
@@ -232,6 +236,10 @@ int main(int argc, char* argv[])
                         // APPELEZ ICI VOTRE FONCTION DE SAUVEGARDE/RESTAURATION DEMANDEE
                         //message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
                         chargerBinaire(&listeRoi, &listeHorde, jeu);
+                        tourRoi = trouverTourRoi(listeRoi); 
+                        initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);  
+                        PositionnePlayerOnPlateau(listeRoi, jeu);           
+                        PositionnePlayerOnPlateau(listeHorde, jeu);  
                         message("Sauvegarde","Chargement de la sauvegarde binaire");
 
                         //Ne pas modifiez les 4 lignes ci-dessous
