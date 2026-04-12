@@ -87,7 +87,7 @@ brew install sdl2 sdl2_image sdl2_ttf sdl2_mixer pkg-config
 Clonez le projet et placez-vous à sa racine :
 
 ```bash
-git clone <url-du-repo>
+git clone <https://github.com/notaccepted269/TowerDefend.git>
 cd TowerDefend
 ```
 
