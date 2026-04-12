@@ -74,11 +74,6 @@ int main(int argc, char* argv[])
         TListePlayer listeHorde = NULL;
         Tunite *tourRoi = creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]);
         AjouterUnite(&listeRoi, tourRoi); 
-
-        PositionnePlayerOnPlateau(listeRoi, jeu);
-        PositionnePlayerOnPlateau(listeHorde, jeu);  
-
-
         int compteur_tour = 0;
   
 
@@ -91,9 +86,6 @@ int main(int argc, char* argv[])
         while ( cont != 0 ){   //VOUS DEVEZ GERER (DETECTER) LA FIN DU JEU -> tourRoiDetruite
                 SDL_PumpEvents(); //do events
                 efface_fenetre(pWinSurf);
-                prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
-
-
                 /***********************************************************************/
                 /*                                                                     */
                 /*                                                                     */
@@ -102,7 +94,8 @@ int main(int argc, char* argv[])
                 initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);
                 PositionnePlayerOnPlateau(listeRoi, jeu);
                 PositionnePlayerOnPlateau(listeHorde, jeu);
-
+                prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
+                
 
                 //Probabilité d'apparition de la horde
                 int probabilite_horde = 5 + rand() % (60 - 5 + 1);
