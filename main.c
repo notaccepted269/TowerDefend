@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
 
 
 
-        prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
         maj_fenetre(pWindow);
 
 
