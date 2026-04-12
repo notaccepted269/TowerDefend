@@ -843,7 +843,24 @@ int **initChemin() {
 }
 
 
-
+/**
+ * Objectif   : Sauvegarder l'état courant de la partie dans un fichier binaire
+ *              ("partiebin.tdb") en sérialisant les unités du roi et de la horde.
+ * Algorithme : Parcours séquentiel de deux listes chaînées avec écriture brute
+ *              en mémoire (fwrite sur les structures Tunite).
+ * Complexité : Temps O(N + M) | Espace O(1)
+ *              où N = nb unités du roi, M = nb unités de la horde.
+ *
+ * @param listeRoi   Liste chaînée des unités appartenant au joueur roi.
+ * @param listeHorde Liste chaînée des unités appartenant à la horde.
+ *
+ * Fonctionnement :
+ *   On ouvre le fichier en écriture binaire, puis on parcourt d'abord la liste
+ *   du roi pour compter ses unités. On écrit ce compteur en tête, puis on
+ *   reparcourt la liste en sérialisant chaque Tunite via fwrite. On reproduit
+ *   exactement le même processus pour la liste de la horde. Le fichier résultant
+ *   a la structure : [nbRoi | unités roi... | nbHorde | unités horde...].
+ */
 void sauvegarderBinaire(TListePlayer listeRoi, TListePlayer listeHorde) {
     FILE *f = fopen("partiebin.tdb", "wb");
     if (f == NULL) {
@@ -888,8 +905,28 @@ void sauvegarderBinaire(TListePlayer listeRoi, TListePlayer listeHorde) {
 }
 
 
-
-
+/**
+ * Objectif   : Restaurer l'état d'une partie depuis un fichier binaire
+ *              ("partiebin.tdb") en reconstruisant les listes du roi et de la horde,
+ *              et en mettant à jour le plateau de jeu.
+ * Algorithme : Vidage des listes existantes suivi d'une désérialisation séquentielle
+ *              avec allocation dynamique pour chaque unité relue.
+ * Complexité : Temps O(N + M) | Espace O(N + M)
+ *              où N = nb unités du roi, M = nb unités de la horde.
+ *
+ * @param listeRoi   Pointeur vers la liste du roi (sera vidée puis reconstruite).
+ * @param listeHorde Pointeur vers la liste de la horde (sera vidée puis reconstruite).
+ * @param jeu        Plateau de jeu 2D dont les cases sont remises à NULL lors du
+ *                   vidage, puis implicitement repeuplées par AjouterUnite.
+ *
+ * Fonctionnement :
+ *   On commence par libérer intégralement les deux listes courantes : pour chaque
+ *   cellule, on remet à NULL la case du plateau pointée par l'unité, on libère la
+ *   Tunite puis la cellule elle-même. On lit ensuite le fichier binaire : d'abord
+ *   le nombre d'unités du roi, puis chaque Tunite allouée dynamiquement est
+ *   désérialisée via fread et insérée dans listeRoi par AjouterUnite. On répète
+ *   l'opération pour la horde.
+ */
 void chargerBinaire(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu) {
     FILE *f = fopen("partiebin.tdb", "rb");
     if (f == NULL) {
@@ -933,6 +970,26 @@ void chargerBinaire(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJe
 }
 
 
+/**
+ * Objectif   : Sauvegarder l'état courant de la partie dans un fichier texte
+ *              lisible ("partieseq.tds") en écrivant les champs de chaque unité
+ *              sous forme de valeurs séparées par des espaces.
+ * Algorithme : Parcours séquentiel de deux listes chaînées avec écriture formatée
+ *              champ par champ via fprintf.
+ * Complexité : Temps O(N + M) | Espace O(1)
+ *              où N = nb unités du roi, M = nb unités de la horde.
+ *
+ * @param listeRoi   Liste chaînée des unités appartenant au joueur roi.
+ * @param listeHorde Liste chaînée des unités appartenant à la horde.
+ *
+ * Fonctionnement :
+ *   On ouvre le fichier en mode texte puis on parcourt la liste du roi pour en
+ *   compter les éléments. Ce compteur est écrit en première ligne, suivi d'une
+ *   ligne par unité listant ses 12 champs (nom, cible, position, PV, vitesses,
+ *   dégâts, portée, coordonnées, etc.). Le même traitement est appliqué à la
+ *   liste de la horde. Le format résultant est : [nbRoi\n lignes roi... nbHorde\n
+ *   lignes horde...], intégralement ré-interprétable par chargerSequentielle.
+ */
 void sauvegarderSequentielle(TListePlayer listeRoi, TListePlayer listeHorde) {
     FILE *f = fopen("partieseq.tds", "w");
     if (f == NULL) {
@@ -983,6 +1040,29 @@ void sauvegarderSequentielle(TListePlayer listeRoi, TListePlayer listeHorde) {
 }
 
 
+/**
+ * Objectif   : Restaurer l'état d'une partie depuis un fichier texte séquentiel
+ *              ("partieseq.tds") en reconstruisant les listes du roi et de la horde,
+ *              et en mettant à jour le plateau de jeu.
+ * Algorithme : Vidage des listes existantes suivi d'une lecture formatée champ par
+ *              champ via fscanf, avec allocation dynamique pour chaque unité relue.
+ * Complexité : Temps O(N + M) | Espace O(N + M)
+ *              où N = nb unités du roi, M = nb unités de la horde.
+ *
+ * @param listeRoi   Pointeur vers la liste du roi (sera vidée puis reconstruite).
+ * @param listeHorde Pointeur vers la liste de la horde (sera vidée puis reconstruite).
+ * @param jeu        Plateau de jeu 2D dont les cases sont remises à NULL lors du
+ *                   vidage, puis implicitement repeuplées par AjouterUnite.
+ *
+ * Fonctionnement :
+ *   On commence par libérer les deux listes courantes en remettant à NULL chaque
+ *   case du plateau associée. On lit ensuite le nombre d'unités du roi via fscanf,
+ *   puis pour chacune on alloue une Tunite, on lit ses 12 champs (les champs de
+ *   type enum sont lus dans des temporaires entiers puis réaffectés), et on
+ *   l'insère dans listeRoi. Le même processus est répété pour la horde. La
+ *   vérification du retour de fscanf sur les compteurs protège contre un fichier
+ *   vide ou corrompu.
+ */
 void chargerSequentielle(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu) {
     FILE *f = fopen("partieseq.tds", "r");
     if (f == NULL) {
@@ -1040,6 +1120,25 @@ void chargerSequentielle(TListePlayer *listeRoi, TListePlayer *listeHorde, Tplat
     printf("Chargement sequentiel (.tds) reussi !\n");
 }
 
+
+/**
+ * Objectif   : Rechercher et retourner le pointeur vers l'unité de type "tour du roi"
+ *              dans la liste des unités du joueur roi.
+ * Algorithme : Parcours linéaire de la liste chaînée avec comparaison du champ nom.
+ * Complexité : Temps O(N) | Espace O(1)
+ *              où N = nombre d'unités dans listeRoi.
+ *
+ * @param listeRoi Liste chaînée des unités appartenant au joueur roi.
+ * @return         Pointeur vers la Tunite dont le champ nom vaut tourRoi,
+ *                 ou NULL si aucune unité correspondante n'est trouvée.
+ *
+ * Fonctionnement :
+ *   On parcourt la liste cellule par cellule en comparant le champ nom de chaque
+ *   Tunite à la constante tourRoi. Dès qu'une correspondance est trouvée, on
+ *   retourne directement le pointeur pdata associé. Si la liste est épuisée sans
+ *   correspondance (tour détruite ou liste vide), on retourne NULL, ce qui permet
+ *   à l'appelant de détecter une condition de fin de partie.
+ */
 Tunite* trouverTourRoi(TListePlayer listeRoi){
     T_cell *current = listeRoi;
     while(current != NULL){
