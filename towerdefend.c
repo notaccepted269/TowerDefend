@@ -816,7 +816,6 @@ int **initChemin() {
                 distance = 1; 
             }
             
-
             if (distance > distanceMaxRestante) {
                 distance = distanceMaxRestante;
             }
@@ -841,4 +840,202 @@ int **initChemin() {
     }
 
     return chemin;
+}
+
+
+
+void sauvegarderBinaire(TListePlayer listeRoi, TListePlayer listeHorde) {
+    FILE *f = fopen("partiebin.tdb", "wb");
+    if (f == NULL) {
+        printf("Erreur d'ouverture du fichier binaire.\n");
+        return;
+    }
+
+    // 1. Compter les unités du roi
+    int nbRoi = 0;
+    T_cell *courant = listeRoi;
+    while (courant != NULL) {
+        nbRoi++;
+        courant = courant->suiv;
+    }
+    
+    // 2. Ecrire le nombre puis les unités
+    fwrite(&nbRoi, sizeof(int), 1, f);
+    courant = listeRoi;
+    while (courant != NULL) {
+        fwrite(courant->pdata, sizeof(Tunite), 1, f);
+        courant = courant->suiv;
+    }
+
+    // 3. Compter les unités de la horde
+    int nbHorde = 0;
+    courant = listeHorde;
+    while (courant != NULL) {
+        nbHorde++;
+        courant = courant->suiv;
+    }
+    
+    // 4. Ecrire le nombre puis les unités
+    fwrite(&nbHorde, sizeof(int), 1, f);
+    courant = listeHorde;
+    while (courant != NULL) {
+        fwrite(courant->pdata, sizeof(Tunite), 1, f);
+        courant = courant->suiv;
+    }
+
+    fclose(f);
+    printf("Sauvegarde binaire reussie !\n");
+}
+
+
+
+
+void chargerBinaire(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu) {
+    FILE *f = fopen("partiebin.tdb", "rb");
+    if (f == NULL) {
+        printf("Erreur : fichier binaire introuvable.\n");
+        return;
+    }
+
+    while (*listeRoi != NULL) {
+        T_cell *tmp = *listeRoi;
+        if (jeu != NULL && tmp->pdata != NULL) jeu[tmp->pdata->posX][tmp->pdata->posY] = NULL;
+        *listeRoi = (*listeRoi)->suiv;
+        free(tmp->pdata);
+        free(tmp);
+    }
+    while (*listeHorde != NULL) {
+        T_cell *tmp = *listeHorde;
+        if (jeu != NULL && tmp->pdata != NULL) jeu[tmp->pdata->posX][tmp->pdata->posY] = NULL;
+        *listeHorde = (*listeHorde)->suiv;
+        free(tmp->pdata);
+        free(tmp);
+    }
+
+    int nbRoi = 0, nbHorde = 0;
+
+    fread(&nbRoi, sizeof(int), 1, f);
+    for (int i = 0; i < nbRoi; i++) {
+        Tunite *u = (Tunite *)malloc(sizeof(Tunite));
+        fread(u, sizeof(Tunite), 1, f);
+        AjouterUnite(listeRoi, u);
+    }
+
+    fread(&nbHorde, sizeof(int), 1, f);
+    for (int i = 0; i < nbHorde; i++) {
+        Tunite *u = (Tunite *)malloc(sizeof(Tunite));
+        fread(u, sizeof(Tunite), 1, f);
+        AjouterUnite(listeHorde, u); 
+    }
+
+    fclose(f);
+    printf("Chargement binaire reussi !\n");
+}
+
+
+void sauvegarderSequentielle(TListePlayer listeRoi, TListePlayer listeHorde) {
+    FILE *f = fopen("partieseq.tds", "w");
+    if (f == NULL) {
+        printf("Erreur d'ouverture du fichier texte.\n");
+        return;
+    }
+
+    // sauvegarde du roi
+    int nbRoi = 0;
+    T_cell *courant = listeRoi;
+    while (courant != NULL) {
+        nbRoi++;
+        courant = courant->suiv;
+    }
+    fprintf(f, "%d\n", nbRoi); 
+
+    courant = listeRoi;
+    while (courant != NULL) {
+        Tunite *u = courant->pdata;
+        fprintf(f, "%d %d %d %d %f %d %d %f %d %d %d %d\n",
+                u->nom, u->cibleAttaquable, u->maposition, u->pointsDeVie,
+                u->vitesseAttaque, u->degats, u->portee, u->vitessedeplacement,
+                u->posX, u->posY, u->peutAttaquer, u->indiceParcours);
+        courant = courant->suiv;
+    }
+
+    // sauvegarde de la horde
+    int nbHorde = 0;
+    courant = listeHorde;
+    while (courant != NULL) {
+        nbHorde++;
+        courant = courant->suiv;
+    }
+    fprintf(f, "%d\n", nbHorde);
+
+    courant = listeHorde;
+    while (courant != NULL) {
+        Tunite *u = courant->pdata;
+        fprintf(f, "%d %d %d %d %f %d %d %f %d %d %d %d\n",
+                u->nom, u->cibleAttaquable, u->maposition, u->pointsDeVie,
+                u->vitesseAttaque, u->degats, u->portee, u->vitessedeplacement,
+                u->posX, u->posY, u->peutAttaquer, u->indiceParcours);
+        courant = courant->suiv;
+    }
+
+    fclose(f);
+    printf("Sauvegarde sequentielle (.tds) reussie !\n");
+}
+
+
+void chargerSequentielle(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu) {
+    FILE *f = fopen("partieseq.tds", "r");
+    if (f == NULL) {
+        printf("Erreur : fichier sequentiel introuvable.\n");
+        return;
+    }
+
+    while (*listeRoi != NULL) {
+        T_cell *tmp = *listeRoi;
+        if (jeu != NULL && tmp->pdata != NULL) jeu[tmp->pdata->posX][tmp->pdata->posY] = NULL;
+        *listeRoi = (*listeRoi)->suiv;
+        free(tmp->pdata);
+        free(tmp);
+    }
+    while (*listeHorde != NULL) {
+        T_cell *tmp = *listeHorde;
+        if (jeu != NULL && tmp->pdata != NULL) jeu[tmp->pdata->posX][tmp->pdata->posY] = NULL;
+        *listeHorde = (*listeHorde)->suiv;
+        free(tmp->pdata);
+        free(tmp);
+    }
+
+    int nbRoi, nbHorde;
+    int tNom, tCible, tPos; 
+
+    if (fscanf(f, "%d", &nbRoi) == 1) {
+        for (int i = 0; i < nbRoi; i++) {
+            Tunite *u = (Tunite *)malloc(sizeof(Tunite));
+            fscanf(f, "%d %d %d %d %f %d %d %f %d %d %d %d",
+                   &tNom, &tCible, &tPos, &u->pointsDeVie,
+                   &u->vitesseAttaque, &u->degats, &u->portee, &u->vitessedeplacement,
+                   &u->posX, &u->posY, &u->peutAttaquer, &u->indiceParcours);
+            u->nom = tNom;
+            u->cibleAttaquable = tCible;
+            u->maposition = tPos;
+            AjouterUnite(listeRoi, u);
+        }
+    }
+
+    if (fscanf(f, "%d", &nbHorde) == 1) {
+        for (int i = 0; i < nbHorde; i++) {
+            Tunite *u = (Tunite *)malloc(sizeof(Tunite));
+            fscanf(f, "%d %d %d %d %f %d %d %f %d %d %d %d",
+                   &tNom, &tCible, &tPos, &u->pointsDeVie,
+                   &u->vitesseAttaque, &u->degats, &u->portee, &u->vitessedeplacement,
+                   &u->posX, &u->posY, &u->peutAttaquer, &u->indiceParcours);
+            u->nom = tNom;
+            u->cibleAttaquable = tCible;
+            u->maposition = tPos;
+            AjouterUnite(listeHorde, u);
+        }
+    }
+
+    fclose(f);
+    printf("Chargement sequentiel (.tds) reussi !\n");
 }

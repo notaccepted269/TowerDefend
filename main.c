@@ -75,14 +75,9 @@ int main(int argc, char* argv[])
         Tunite *tourRoi = creeTourRoi(tabParcours[NBCOORDPARCOURS-1][0], tabParcours[NBCOORDPARCOURS-1][1]);
         AjouterUnite(&listeRoi, tourRoi); 
 
-        Tunite *tourAir = creeTourAir(3, 10); 
-        Tunite *tourSol = creeTourSol(7, 10);
-        AjouterUnite(&listeRoi, tourAir);
-        AjouterUnite(&listeRoi, tourSol); 
-        
-        AjouterUnite(&listeHorde, creeDragon(tabParcours[0][0], tabParcours[0][1]));     
+        PositionnePlayerOnPlateau(listeRoi, jeu);
+        PositionnePlayerOnPlateau(listeHorde, jeu);  
 
-        srand(time(NULL));
 
         int compteur_tour = 0;
   
@@ -98,10 +93,16 @@ int main(int argc, char* argv[])
                 efface_fenetre(pWinSurf);
                 prepareAllSpriteDuJeu(jeu,tabParcours,LARGEURJEU,HAUTEURJEU,TabSprite,pWinSurf);
 
+
                 /***********************************************************************/
                 /*                                                                     */
                 /*                                                                     */
                 //APPELEZ ICI VOS FONCTIONS QUI FONT EVOLUER LE JEU
+
+                initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);
+                PositionnePlayerOnPlateau(listeRoi, jeu);
+                PositionnePlayerOnPlateau(listeHorde, jeu);
+
 
                 //Probabilité d'apparition de la horde
                 int probabilite_horde = 5 + rand() % (60 - 5 + 1);
@@ -186,25 +187,10 @@ int main(int argc, char* argv[])
                 compteur_tour++;
 
 
-                printf("avant initPlateau\n");
-                initPlateauAvecNULL(jeu, LARGEURJEU, HAUTEURJEU);
-                printf("apres initPlateau\n");
-                printf("avant PositionneRoi\n");
-                PositionnePlayerOnPlateau(listeRoi, jeu);
-                printf("apres PositionneRoi\n");
-                printf("avant PositionneHorde\n");
-                PositionnePlayerOnPlateau(listeHorde, jeu);
-                printf("apres PositionneHorde\n");
-                printf("avant deplacerHorde\n");
                 deplacerHorde(listeHorde, tabParcours, jeu);
-                printf("avant phaseCombat\n");
-                printf("debut phaseCombat\n");
                 phaseCombat(&listeRoi, &listeHorde, jeu, pWinSurf);
-                printf("avant reinitRoi\n");
                 reinitialiserAttaques(listeRoi);
-                printf("avant reinitHorde\n");
                 reinitialiserAttaques(listeHorde);
-                printf("fin du tour\n");
                         /* dans votre fonction "combat" que vous appelerez ici, dans son code utiliser dessineAttaque
 
                 //exemple d'appel de dessineAttaque (factice car les unit�s n'appartiennent pas ici � aucune liste d'unit� (ni � la horde ni au Roi)
@@ -235,7 +221,12 @@ int main(int argc, char* argv[])
                         /* Ajouter vos appels de fonctions ci-dessous qd le joueur appuye sur D */
 
                         // APPELEZ ICI VOTRE FONCTION DE SAUVEGARDE/RESTAURATION DEMANDEE
-                        message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        //message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        chargerSequentielle(&listeRoi, &listeHorde, jeu);
+                        PositionnePlayerOnPlateau(listeRoi, jeu);
+                        PositionnePlayerOnPlateau(listeHorde, jeu);
+                        message("Sauvegarde","Chargement de la sauvegarde sequentielle");
+                        
 
                         //Ne pas modifiez les 4 lignes ci-dessous
                         efface_fenetre(pWinSurf);
@@ -247,7 +238,9 @@ int main(int argc, char* argv[])
                         /* Ajouter vos appels de fonctions ci-dessous qd le joueur appuye sur C */
 
                         // APPELEZ ICI VOTRE FONCTION DE SAUVEGARDE/RESTAURATION DEMANDEE
-                        message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        //message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        chargerBinaire(&listeRoi, &listeHorde, jeu);
+                        message("Sauvegarde","Chargement de la sauvegarde binaire");
 
                         //Ne pas modifiez les 4 lignes ci-dessous
                         efface_fenetre(pWinSurf);
@@ -259,7 +252,9 @@ int main(int argc, char* argv[])
                         /* Ajouter vos appels de fonctions ci-dessous qd le joueur appuye sur D */
 
                         // APPELEZ ICI VOTRE FONCTION DE SAUVEGARDE/RESTAURATION DEMANDEE
-                        message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        //message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        sauvegarderSequentielle(listeRoi, listeHorde);
+                        message("Sauvegarde","Sauvergarde sequentielle en cours...");
 
                         //Ne pas modifiez les 4 lignes ci-dessous
                         efface_fenetre(pWinSurf);
@@ -271,7 +266,10 @@ int main(int argc, char* argv[])
                         /* Ajouter vos appels de fonctions ci-dessous qd le joueur appyue sur S */
 
                         // APPELEZ ICI VOTRE FONCTION DE SAUVEGARDE/RESTAURATION DEMANDEE
-                        message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        //message("Sauvegarde","Placer ici votre fonction de restauration/sauvegarde");
+                        sauvegarderBinaire(listeRoi, listeHorde);
+                        message("Sauvegarde","Sauvergarde binaire en cours...");
+
 
                         //Ne pas modifiez les 4 lignes ci-dessous
                         efface_fenetre(pWinSurf);

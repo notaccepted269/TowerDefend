@@ -67,7 +67,7 @@ Tunite *creeTourAir(int posx, int posy);
 Tunite *creeTourRoi(int posx, int posy);
 
 
-bool tourRoiDetruite(Tunite *leRoi);
+bool tourRoiDetruite(Tunite *tourRoi);
 
 void combat(SDL_Surface *surface , Tunite * UniteAttaquante, Tunite * UniteCible);  //qui utilise dessineAttaque (de maSDL.h)
 
@@ -90,6 +90,9 @@ TListePlayer sortListPlayer(TListePlayer *player);
 void deplacerHorde(TListePlayer player, int **tabParcours, TplateauJeu jeu);
 void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Surface* surface);
 void reinitialiserAttaques(TListePlayer player);
-bool estSurChemin(int x, int y, int **tabParcours);
+void sauvegarderBinaire(TListePlayer listeRoi, TListePlayer listeHorde);
+void chargerBinaire(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu);
+void sauvegarderSequentielle(TListePlayer listeRoi, TListePlayer listeHorde);
+void chargerSequentielle(TListePlayer *listeRoi, TListePlayer *listeHorde, TplateauJeu jeu);
 
 #endif // TOWERDEFEND_H_INCLUDED
