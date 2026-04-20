@@ -1,34 +1,29 @@
 # ==============================================================================
 # Makefile — Projet TowerDefend
-# Objectif   : Compiler un projet C avec SDL2
-# Outil      : gcc + pkg-config pour détecter automatiquement les flags SDL2
+# Compatible Linux (pkg-config) et Windows (MinGW/MSYS2)
 # ==============================================================================
 
-# --- Compilateur & standard ---
-CC      := gcc
-CFLAGS  := -Wall -Wextra -g -std=c99
+CC     := gcc
+CFLAGS := -Wall -Wextra -g -std=c99
+TARGET := tower_defend
 
-# --- Binaire de sortie ---
-TARGET  := tower_defend
-
-# --- Sources & objets ---
-SRCS    := $(wildcard *.c)
-OBJS    := $(SRCS:.c=.o)          
-
-# --- Flags SDL2 via pkg-config ---
+SRCS := $(wildcard *.c)
+OBJS := $(SRCS:.c=.o)
 
 SDL_LIBS := sdl2 SDL2_image SDL2_ttf SDL2_mixer
 
-CFLAGS  += $(shell pkg-config --cflags $(SDL_LIBS))
-LDFLAGS := $(shell pkg-config --libs   $(SDL_LIBS))
+# --- Détection OS ---
+ifeq ($(OS), Windows_NT)
+    CFLAGS  += -IC:/msys64/mingw64/include/SDL2
+    LDFLAGS := -LC:/msys64/mingw64/lib -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+    TARGET  := tower_defend.exe
+else
+    CFLAGS  += $(shell pkg-config --cflags $(SDL_LIBS))
+    LDFLAGS := $(shell pkg-config --libs $(SDL_LIBS))
+endif
 
 # ==============================================================================
-# Règles
-# ==============================================================================
-
-
 all: $(TARGET)
-
 
 $(TARGET): $(OBJS)
 	$(CC) $(OBJS) -o $@ $(LDFLAGS)
