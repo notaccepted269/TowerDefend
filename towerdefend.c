@@ -666,11 +666,19 @@ void phaseCombat(TListePlayer* roi, TListePlayer* horde, TplateauJeu jeu, SDL_Su
                 Tunite *cible = ciblesAPortee->pdata;
                 combat(surface, attaquant, cible);
 
-                /* Supprime la tour du roi si détruite */
-                if (cible->pointsDeVie == 0) {
-
-                    SupprimerUnite(roi, cible, jeu);
+                TListePlayer cibleCourante = ciblesAPortee;
+                while(cibleCourante != NULL){
+                    if(cibleCourante -> pdata -> nom == tourRoi){
+                        combat(surface, attaquant, cibleCourante -> pdata);
+                        if(cibleCourante -> pdata -> pointsDeVie == 0){
+                            SupprimerUnite(roi, cibleCourante -> pdata, jeu);
+                        }
+                        break;
+                    }
+                    cibleCourante = cibleCourante -> suiv;
                 }
+                
+
                 T_cell *tmp;
                 while (ciblesAPortee != NULL) {
                     tmp = ciblesAPortee->suiv;
